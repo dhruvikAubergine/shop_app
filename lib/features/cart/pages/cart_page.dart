@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/cart_provider.dart';
-import 'package:shop_app/providers/order_provider.dart';
-import 'package:shop_app/widgets/cart_item.dart';
+import 'package:shop_app/features/cart/provider/cart_provider.dart';
+import 'package:shop_app/features/cart/widgets/cart_item.dart';
+import 'package:shop_app/features/order/provider/order_provider.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({super.key});
@@ -42,6 +42,12 @@ class CartPage extends StatelessWidget {
                           cart.totalAmount,
                         );
                         cart.clear();
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('order placed successfully.'),
+                            duration: Duration(seconds: 3),
+                          ),
+                        );
                       },
                       child: const Text('Order now'),
                     )

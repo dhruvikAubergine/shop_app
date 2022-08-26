@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/models/product.dart';
-import 'package:shop_app/providers/product_provider.dart';
-import 'package:shop_app/widgets/user_product_item.dart';
+import 'package:shop_app/features/home/models/product.dart';
+import 'package:shop_app/features/home/provider/product_provider.dart';
+import 'package:shop_app/features/manage_product/widgets/user_product_item.dart';
+
+import '../widgets/user_product_item.dart';
 
 class EditProductPage extends StatefulWidget {
   const EditProductPage({super.key});

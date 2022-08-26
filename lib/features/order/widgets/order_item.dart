@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shop_app/models/order.dart';
+import 'package:shop_app/features/order/models/order.dart';
 
 class OrderItem extends StatefulWidget {
   const OrderItem({super.key, required this.order});

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shop_app/pages/order_page.dart';
-import 'package:shop_app/pages/user_product_page.dart';
+import 'package:shop_app/features/manage_product/pages/user_product_page.dart';
+import 'package:shop_app/features/order/pages/order_page.dart';
 
 class AppDrawer extends StatelessWidget {
   const AppDrawer({super.key});

@@ -1,4 +1,4 @@
-import 'package:shop_app/models/cart.dart';
+import 'package:shop_app/features/cart/models/cart.dart';
 
 class Order {
   Order({

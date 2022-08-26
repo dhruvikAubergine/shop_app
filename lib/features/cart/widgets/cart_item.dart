@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/providers/cart_provider.dart';
+import 'package:shop_app/features/cart/provider/cart_provider.dart';
 
 class CartItem extends StatelessWidget {
   const CartItem({
@@ -39,7 +39,15 @@ class CartItem extends StatelessWidget {
                 ),
                 ElevatedButton(
                   child: const Text('Yes'),
-                  onPressed: () => Navigator.of(context).pop(true),
+                  onPressed: () {
+                    Navigator.of(context).pop(true);
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Product deleted from the cart.'),
+                        duration: Duration(seconds: 3),
+                      ),
+                    );
+                  },
                 ),
               ],
             );

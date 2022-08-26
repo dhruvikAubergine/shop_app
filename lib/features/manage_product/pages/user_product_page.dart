@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/pages/edit_product_page.dart';
-import 'package:shop_app/providers/product_provider.dart';
+import 'package:shop_app/features/home/provider/product_provider.dart';
+import 'package:shop_app/features/manage_product/pages/edit_product_page.dart';
+import 'package:shop_app/features/manage_product/widgets/user_product_item.dart';
 import 'package:shop_app/widgets/app_drawer.dart';
-import 'package:shop_app/widgets/user_product_item.dart';
 
 class UserProductPage extends StatelessWidget {
   const UserProductPage({super.key});
