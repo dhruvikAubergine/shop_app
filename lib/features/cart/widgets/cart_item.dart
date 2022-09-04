@@ -43,8 +43,8 @@ class CartItem extends StatelessWidget {
                     Navigator.of(context).pop(true);
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text('Product deleted from the cart.'),
                         duration: Duration(seconds: 3),
+                        content: Text('Product deleted from the cart.'),
                       ),
                     );
                   },

@@ -1,20 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/features/home/models/product.dart';
+import 'package:shop_app/features/home/models/new_product.dart';
 import 'package:shop_app/features/home/provider/product_provider.dart';
 import 'package:shop_app/features/manage_product/pages/edit_product_page.dart';
 
 class UserProductItem extends StatelessWidget {
   const UserProductItem({super.key, required this.product});
-  final Product product;
+  final NewProduct product;
 
   @override
   Widget build(BuildContext context) {
     return Card(
       child: ListTile(
-        title: Text(product.title),
+        title: Text(product.title ?? ''),
         leading: CircleAvatar(
-          backgroundImage: NetworkImage(product.imageUrl),
+          backgroundImage: NetworkImage(product.imageUrl ?? ''),
         ),
         trailing: SizedBox(
           width: 100,
@@ -27,7 +27,8 @@ class UserProductItem extends StatelessWidget {
                 onPressed: () => Navigator.pushNamed(
                   context,
                   EditProductPage.routeName,
-                  arguments: ProductArgument(id: product.id, isForEdit: true),
+                  arguments:
+                      ProductArgument(id: product.id ?? '', isForEdit: true),
                 ),
               ),
               IconButton(
@@ -65,7 +66,7 @@ class UserProductItem extends StatelessWidget {
                 Provider.of<ProductProvider>(
                   context,
                   listen: false,
-                ).deleteProduct(product.id);
+                ).deleteProduct(product.id ?? '');
                 Navigator.of(context).pop(true);
                 ScaffoldMessenger.of(context).showSnackBar(
                   const SnackBar(

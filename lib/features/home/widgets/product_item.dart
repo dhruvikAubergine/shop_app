@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/features/authentication/providers/auth_provider.dart';
 import 'package:shop_app/features/home/pages/product_details_page.dart';
-import 'package:shop_app/features/cart/provider/cart_provider.dart';
 import 'package:shop_app/features/home/provider/product_provider.dart';
 
-class ProductItem extends StatelessWidget {
+class ProductItem extends StatefulWidget {
   const ProductItem({
     super.key,
     required this.id,
@@ -12,9 +12,15 @@ class ProductItem extends StatelessWidget {
   final String id;
 
   @override
+  State<ProductItem> createState() => _ProductItemState();
+}
+
+class _ProductItemState extends State<ProductItem> {
+  @override
   Widget build(BuildContext context) {
-    final product = Provider.of<ProductProvider>(context).findById(id);
-    final cart = Provider.of<CartProvider>(context);
+    final product = Provider.of<ProductProvider>(context).findById(widget.id);
+    final auth = Provider.of<AuthProvider>(context);
+    // final cart = Provider.of<CartProvider>(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(
@@ -35,30 +41,6 @@ class ProductItem extends StatelessWidget {
             ),
           ),
           backgroundColor: Colors.black54,
-          leading: IconButton(
-            icon: const Icon(Icons.shopping_cart),
-            onPressed: () {
-              cart.addItem(
-                product.id,
-                product.price,
-                product.title,
-                product.imageUrl,
-              );
-              ScaffoldMessenger.of(context).hideCurrentSnackBar();
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: const Text('Added item to cart'),
-                  duration: const Duration(seconds: 3),
-                  action: SnackBarAction(
-                    label: 'Undo',
-                    onPressed: () {
-                      cart.removeSingleItem(product.id);
-                    },
-                  ),
-                ),
-              );
-            },
-          ),
           trailing: Consumer<ProductProvider>(
             builder: (context, provider, child) {
               return IconButton(
@@ -68,7 +50,9 @@ class ProductItem extends StatelessWidget {
                       : Icons.favorite_border_rounded,
                 ),
                 onPressed: () {
-                  provider.toggleFavorite(product.id);
+                  setState(() {
+                    provider.toggleFavorite(product.id!);
+                  });
                 },
               );
             },
@@ -79,10 +63,10 @@ class ProductItem extends StatelessWidget {
             Navigator.pushNamed(
               context,
               ProductDetailsPage.routeName,
-              arguments: product.id,
+              arguments: product,
             );
           },
-          child: Image.network(product.imageUrl, fit: BoxFit.cover),
+          child: Image.network(product.imageUrl ?? '', fit: BoxFit.cover),
         ),
       ),
     );

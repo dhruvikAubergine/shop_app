@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/features/home/provider/product_provider.dart';
+import 'package:shop_app/features/cart/provider/cart_provider.dart';
+import 'package:shop_app/features/home/models/new_product.dart';
 
 class ProductDetailsPage extends StatelessWidget {
   const ProductDetailsPage({super.key});
@@ -9,13 +10,14 @@ class ProductDetailsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final productId = ModalRoute.of(context)!.settings.arguments! as String;
-    final loadedProduct = Provider.of<ProductProvider>(context, listen: false)
-        .findById(productId);
+    final product = ModalRoute.of(context)!.settings.arguments! as NewProduct;
+
+    final cart = Provider.of<CartProvider>(context);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text(loadedProduct.title),
+        title: Text(product.title ?? ''),
       ),
       body: ListView(
         padding: const EdgeInsets.all(10),
@@ -23,22 +25,64 @@ class ProductDetailsPage extends StatelessWidget {
           SizedBox(
             height: 300,
             child: Image.network(
-              loadedProduct.imageUrl,
+              product.imageUrl ?? '',
               fit: BoxFit.fill,
             ),
           ),
           const SizedBox(height: 10),
           Text(
-            '\$${loadedProduct.price}',
+            '\$${product.price}',
             textAlign: TextAlign.center,
             style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
           ),
           Text(
-            loadedProduct.title,
+            product.title ?? '',
             textAlign: TextAlign.center,
             style: const TextStyle(fontSize: 18),
           )
         ],
+      ),
+      bottomNavigationBar: BottomAppBar(
+        child: Padding(
+          padding: const EdgeInsets.all(10),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  cart.addItem(
+                    product.id ?? '',
+                    product.price ?? 0,
+                    product.title ?? '',
+                    product.imageUrl ?? '',
+                  );
+                  ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: const Text('Added item to cart'),
+                      duration: const Duration(seconds: 3),
+                      action: SnackBarAction(
+                        label: 'Undo',
+                        onPressed: () {
+                          // cart.removeSingleItem(product.id ?? '');
+                        },
+                      ),
+                    ),
+                  );
+                },
+                style: ButtonStyle(
+                  backgroundColor: MaterialStateProperty.all(
+                    Theme.of(context).primaryColor,
+                  ),
+                ),
+                child: const Text(
+                  'Add to Cart',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

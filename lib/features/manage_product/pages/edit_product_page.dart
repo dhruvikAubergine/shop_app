@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/features/home/models/product.dart';
+import 'package:shop_app/features/home/models/new_product.dart';
 import 'package:shop_app/features/home/provider/product_provider.dart';
 import 'package:shop_app/features/manage_product/widgets/user_product_item.dart';
-
-import '../widgets/user_product_item.dart';
 
 class EditProductPage extends StatefulWidget {
   const EditProductPage({super.key});
@@ -15,6 +13,9 @@ class EditProductPage extends StatefulWidget {
 }
 
 class _EditProductPageState extends State<EditProductPage> {
+  static const String urlRegexPattern =
+      r'((http|https)://)(www.)+[a-zA-Z0-9@:%._\\+~#?&//=]{2,256}\\.[a-z]+{2,6}\\b([-a-zA-Z0-9@:%._\\+~#?&//=]*)';
+
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   final _descriptionController = TextEditingController();
@@ -22,34 +23,47 @@ class _EditProductPageState extends State<EditProductPage> {
   final _titleController = TextEditingController();
   final _priceController = TextEditingController();
 
-  final bool _isInit = true;
+  bool _isUrlValid = true;
   String productId = '';
 
-  void _onSave() {
+  Future<void> _onSave() async {
     if (!(_formKey.currentState?.validate() ?? false)) {
       return;
     }
 
     _formKey.currentState?.save();
-    final product = Product(
+    final product = NewProduct(
       id: productId == '' ? DateTime.now().toString() : productId,
       title: _titleController.text,
       description: _descriptionController.text,
       price: double.parse(_priceController.text),
-      imageUrl: _imageUrlController.text,
+      imageUrl: _isUrlValid ? _imageUrlController.text : '',
     );
     if (productId == '') {
-      Provider.of<ProductProvider>(context, listen: false).addProduct(product);
-      Navigator.of(context).pop();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Product is added.'),
-          duration: Duration(seconds: 3),
-        ),
-      );
+      try {
+        await Provider.of<ProductProvider>(context, listen: false)
+            .addProduct(product);
+
+        if (!mounted) return;
+        Navigator.of(context).pop();
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Product is added.'),
+            duration: Duration(seconds: 3),
+          ),
+        );
+      } catch (error) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Something went wrong, please try again!'),
+          ),
+        );
+      }
     } else {
-      Provider.of<ProductProvider>(context, listen: false)
-          .updateProduct(product.id, product);
+      await Provider.of<ProductProvider>(context, listen: false)
+          .updateProduct(product.id ?? '', product);
+
+      if (!mounted) return;
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -58,33 +72,27 @@ class _EditProductPageState extends State<EditProductPage> {
         ),
       );
     }
-
-    // log(product.title);
-    // log(product.price.toString());
-    // log(product.description);
-    // log(product.imageUrl);
   }
 
   @override
   void didChangeDependencies() {
-    if (_isInit) {
-      final productArguments =
-          ModalRoute.of(context)!.settings.arguments! as ProductArgument;
-      if (productArguments.isForEdit == true) {
-        productId = productArguments.id;
-        final editedProduct =
-            Provider.of<ProductProvider>(context).findById(productArguments.id);
-        _titleController.text = editedProduct.title;
-        _priceController.text = editedProduct.price.toString();
-        _descriptionController.text = editedProduct.description;
-        _imageUrlController.text = editedProduct.imageUrl;
-      } else {
-        _titleController.text = '';
-        _priceController.text = '';
-        _descriptionController.text = '';
-        _imageUrlController.text = '';
-      }
+    final productArguments =
+        ModalRoute.of(context)!.settings.arguments! as ProductArgument;
+    if (productArguments.isForEdit == true) {
+      productId = productArguments.id;
+      final editedProduct =
+          Provider.of<ProductProvider>(context).findById(productArguments.id);
+      _titleController.text = editedProduct.title ?? '';
+      _priceController.text = editedProduct.price.toString();
+      _descriptionController.text = editedProduct.description ?? '';
+      _imageUrlController.text = editedProduct.imageUrl ?? '';
+    } else {
+      _titleController.text = '';
+      _priceController.text = '';
+      _descriptionController.text = '';
+      _imageUrlController.text = '';
     }
+
     super.didChangeDependencies();
   }
 
@@ -101,6 +109,7 @@ class _EditProductPageState extends State<EditProductPage> {
           padding: const EdgeInsets.all(10),
           children: [
             TextFormField(
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               controller: _titleController,
               textInputAction: TextInputAction.next,
               decoration: InputDecoration(
@@ -122,8 +131,9 @@ class _EditProductPageState extends State<EditProductPage> {
             ),
             TextFormField(
               controller: _priceController,
-              textInputAction: TextInputAction.next,
               keyboardType: TextInputType.number,
+              textInputAction: TextInputAction.next,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               decoration: InputDecoration(
                 labelText: 'Price',
                 border: OutlineInputBorder(
@@ -131,6 +141,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 ),
               ),
               validator: (value) {
+                if (value?.isEmpty ?? true) return 'Please enter a price';
                 final price = double.tryParse(value ?? '') ?? 0;
                 if (price.isNegative || price.isNaN || price == 0) {
                   return 'Please enter a valid price';
@@ -140,10 +151,10 @@ class _EditProductPageState extends State<EditProductPage> {
             ),
             const SizedBox(height: 10),
             TextFormField(
-              controller: _descriptionController,
               maxLines: 2,
-              // textInputAction: TextInputAction.next,
+              controller: _descriptionController,
               keyboardType: TextInputType.multiline,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
               decoration: InputDecoration(
                 labelText: 'Description',
                 border: OutlineInputBorder(
@@ -151,11 +162,10 @@ class _EditProductPageState extends State<EditProductPage> {
                 ),
               ),
               validator: (value) {
-                final title = value?.trim() ?? '';
-                if (title.isEmpty) {
+                final desc = value?.trim() ?? '';
+                if (desc.isEmpty) {
                   return 'Please enter a description';
-                }
-                if (title.length < 10) {
+                } else if (desc.length < 10) {
                   return 'Should be at least 10 characters long';
                 }
                 return null;
@@ -167,22 +177,30 @@ class _EditProductPageState extends State<EditProductPage> {
                 CircleAvatar(
                   radius: 35,
                   backgroundColor: Colors.white,
-                  child: _imageUrlController.text.isEmpty
-                      ? const Icon(
-                          Icons.shopping_bag_rounded,
-                          size: 40,
-                        )
-                      : ClipRRect(
-                          borderRadius: BorderRadius.circular(50),
-                          child: Image.network(
-                            _imageUrlController.text,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
+                  child:
+                      _isUrlValid == false || _imageUrlController.text.isEmpty
+                          ? const Icon(
+                              Icons.shopping_bag_rounded,
+                              size: 40,
+                            )
+                          : ClipRRect(
+                              borderRadius: BorderRadius.circular(50),
+                              child: Image.network(
+                                _imageUrlController.text,
+                                fit: BoxFit.cover,
+                              ),
+                            ),
                 ),
                 const SizedBox(width: 10),
                 Expanded(
                   child: TextFormField(
+                    keyboardType: TextInputType.url,
+                    controller: _imageUrlController,
+                    textInputAction: TextInputAction.done,
+                    autovalidateMode: AutovalidateMode.onUserInteraction,
+                    onEditingComplete: () {
+                      setState(() {});
+                    },
                     decoration: InputDecoration(
                       labelText: 'Image URL',
                       border: OutlineInputBorder(
@@ -192,21 +210,21 @@ class _EditProductPageState extends State<EditProductPage> {
                     validator: (value) {
                       final url = value?.trim() ?? '';
                       if (url.isEmpty) {
+                        _isUrlValid = false;
                         return 'Please enter an Image URL';
-                      }
-                      if (!url.startsWith('http') && !url.startsWith('https')) {
+                      } else if (!url.startsWith('http') &&
+                          !url.startsWith('https')) {
+                        _isUrlValid = false;
+
                         return 'Please enter a valid URL';
                       }
-                      // if (!Uri.parse(url).isAbsolute) {
+                      // else if (!RegExp(urlRegexPattern).hasMatch(url)) {
+                      //   _isUrlValid = false;
+
                       //   return 'Please enter a valid URL';
                       // }
+                      _isUrlValid = true;
                       return null;
-                    },
-                    keyboardType: TextInputType.url,
-                    textInputAction: TextInputAction.done,
-                    controller: _imageUrlController,
-                    onEditingComplete: () {
-                      setState(() {});
                     },
                   ),
                 ),

@@ -8,8 +8,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/features/authentication/pages/authentication_page.dart';
+import 'package:shop_app/features/authentication/providers/auth_provider.dart';
 import 'package:shop_app/features/cart/pages/cart_page.dart';
 import 'package:shop_app/features/cart/provider/cart_provider.dart';
+import 'package:shop_app/features/favorite_product/pages/favorite_product_page%20.dart';
 import 'package:shop_app/features/home/pages/product_details_page.dart';
 import 'package:shop_app/features/home/pages/product_overview_page.dart';
 import 'package:shop_app/features/home/provider/product_provider.dart';
@@ -26,31 +29,61 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => ProductProvider()),
-        ChangeNotifierProvider(create: (context) => OrderProvider()),
-        ChangeNotifierProvider(create: (context) => CartProvider()),
-      ],
-      child: MaterialApp(
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-          useMaterial3: true,
-          appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
-          colorScheme: ColorScheme.fromSwatch(
-            accentColor: const Color(0xFF13B9FF),
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProxyProvider<AuthProvider, ProductProvider>(
+          create: (context) => ProductProvider(
+            Provider.of<AuthProvider>(context, listen: false).token,
+            [],
+          ),
+          update: (context, auth, previousProducts) => ProductProvider(
+            auth.token,
+            previousProducts == null ? [] : previousProducts.items,
           ),
         ),
-        localizationsDelegates: const [
-          AppLocalizations.delegate,
-          GlobalMaterialLocalizations.delegate,
-        ],
-        supportedLocales: AppLocalizations.supportedLocales,
-        home: const ProductOverviewPage(),
-        routes: {
-          ProductDetailsPage.routeName: (context) => const ProductDetailsPage(),
-          UserProductPage.routeName: (context) => const UserProductPage(),
-          EditProductPage.routeName: (context) => const EditProductPage(),
-          OrderPage.routeName: (context) => const OrderPage(),
-          CartPage.routeName: (context) => const CartPage(),
+        ChangeNotifierProxyProvider<AuthProvider, OrderProvider>(
+          update: (context, auth, previousOrders) => OrderProvider(
+            auth.token,
+            previousOrders == null ? [] : previousOrders.orderitems,
+          ),
+          create: (context) => OrderProvider(
+            Provider.of<AuthProvider>(context, listen: false).token,
+            [],
+          ),
+        ),
+        ChangeNotifierProvider(create: (context) => CartProvider()),
+      ],
+      child: Consumer<AuthProvider>(
+        builder: (context, auth, child) {
+          return MaterialApp(
+            debugShowCheckedModeBanner: false,
+            theme: ThemeData(
+              useMaterial3: true,
+              appBarTheme: const AppBarTheme(color: Color(0xFF13B9FF)),
+              colorScheme: ColorScheme.fromSwatch(
+                accentColor: const Color(0xFF13B9FF),
+              ),
+            ),
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: auth.isAuth
+                ? const ProductOverviewPage()
+                : const AuthenticationPage(),
+            routes: {
+              CartPage.routeName: (context) => const CartPage(),
+              OrderPage.routeName: (context) => const OrderPage(),
+              UserProductPage.routeName: (context) => const UserProductPage(),
+              EditProductPage.routeName: (context) => const EditProductPage(),
+              ProductDetailsPage.routeName: (context) =>
+                  const ProductDetailsPage(),
+              FavoriteProductPage.routeName: (context) =>
+                  const FavoriteProductPage(),
+              ProductOverviewPage.routeName: (context) =>
+                  const ProductOverviewPage(),
+            },
+          );
         },
       ),
     );

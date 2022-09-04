@@ -2,11 +2,11 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:shop_app/features/order/models/order.dart';
+import 'package:shop_app/features/order/models/new_order.dart';
 
 class OrderItem extends StatefulWidget {
   const OrderItem({super.key, required this.order});
-  final Order order;
+  final NewOrder order;
 
   @override
   State<OrderItem> createState() => _OrderItemState();
@@ -23,7 +23,7 @@ class _OrderItemState extends State<OrderItem> {
           ListTile(
             title: Text('\$${widget.order.amount}'),
             subtitle:
-                Text(DateFormat.yMMMMd('en_US').format(widget.order.dateTime)),
+                Text(DateFormat.yMMMMd('en_US').format(widget.order.dateTime!)),
             trailing: IconButton(
               icon: Icon(
                 _expanded
@@ -39,17 +39,17 @@ class _OrderItemState extends State<OrderItem> {
           ),
           if (_expanded)
             SizedBox(
-              height: min(widget.order.product.length * 10.0 + 50, 180),
+              height: min(widget.order.products!.length * 10.0 + 50, 180),
               child: ListView(
                 padding: const EdgeInsets.all(10) +
                     const EdgeInsets.only(bottom: 10),
-                children: widget.order.product
+                children: widget.order.products!
                     .map(
                       (product) => Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           Text(
-                            product.title,
+                            product.title ?? '',
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.bold,
