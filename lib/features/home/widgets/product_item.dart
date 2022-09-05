@@ -51,7 +51,7 @@ class _ProductItemState extends State<ProductItem> {
                 ),
                 onPressed: () {
                   setState(() {
-                    provider.toggleFavorite(product.id!);
+                    provider.toggleFavorite(product.id!, auth.userId);
                   });
                 },
               );

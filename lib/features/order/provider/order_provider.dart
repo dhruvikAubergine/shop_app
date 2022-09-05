@@ -7,9 +7,10 @@ import 'package:shop_app/features/cart/models/new_cart.dart';
 import 'package:shop_app/features/order/models/new_order.dart';
 
 class OrderProvider with ChangeNotifier {
-  OrderProvider(this.authToken, this._orders);
+  OrderProvider(this.authToken, this.userId, this._orders);
   List<NewOrder> _orders = [];
   final String authToken;
+  final String userId;
 
   List<NewOrder> get orderitems {
     return _orders;
@@ -17,7 +18,7 @@ class OrderProvider with ChangeNotifier {
 
   Future<void> fetchOrders() async {
     final url = Uri.parse(
-      'https://personal-expenses-e3eac-default-rtdb.firebaseio.com//orders.json?auth=$authToken',
+      'https://personal-expenses-e3eac-default-rtdb.firebaseio.com//orders/$userId.json?auth=$authToken',
     );
     try {
       final response = await http.get(url);
@@ -70,7 +71,7 @@ class OrderProvider with ChangeNotifier {
   Future<void> addOrder(List<NewCart> cartProduct, double total) async {
     final timestamp = DateTime.now();
     final url = Uri.parse(
-      'https://personal-expenses-e3eac-default-rtdb.firebaseio.com//orders.json?auth=$authToken',
+      'https://personal-expenses-e3eac-default-rtdb.firebaseio.com//orders/$userId.json?auth=$authToken',
     );
     final order =
         NewOrder(amount: total, dateTime: timestamp, products: cartProduct);

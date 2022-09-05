@@ -29,28 +29,32 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (context) => AuthProvider()),
+        ChangeNotifierProvider.value(value: AuthProvider()),
         ChangeNotifierProxyProvider<AuthProvider, ProductProvider>(
           create: (context) => ProductProvider(
             Provider.of<AuthProvider>(context, listen: false).token,
+            Provider.of<AuthProvider>(context, listen: false).userId,
             [],
           ),
           update: (context, auth, previousProducts) => ProductProvider(
             auth.token,
+            auth.userId,
             previousProducts == null ? [] : previousProducts.items,
           ),
         ),
         ChangeNotifierProxyProvider<AuthProvider, OrderProvider>(
           update: (context, auth, previousOrders) => OrderProvider(
             auth.token,
+            auth.userId,
             previousOrders == null ? [] : previousOrders.orderitems,
           ),
           create: (context) => OrderProvider(
             Provider.of<AuthProvider>(context, listen: false).token,
+            Provider.of<AuthProvider>(context, listen: false).userId,
             [],
           ),
         ),
-        ChangeNotifierProvider(create: (context) => CartProvider()),
+        ChangeNotifierProvider.value(value: CartProvider()),
       ],
       child: Consumer<AuthProvider>(
         builder: (context, auth, child) {
@@ -70,7 +74,16 @@ class App extends StatelessWidget {
             supportedLocales: AppLocalizations.supportedLocales,
             home: auth.isAuth
                 ? const ProductOverviewPage()
-                : const AuthenticationPage(),
+                : FutureBuilder(
+                    future: auth.tryAutoLogin(),
+                    builder: (context, snapshot) {
+                      return snapshot.connectionState == ConnectionState.waiting
+                          ? const Center(
+                              child: CircularProgressIndicator(),
+                            )
+                          : const AuthenticationPage();
+                    },
+                  ),
             routes: {
               CartPage.routeName: (context) => const CartPage(),
               OrderPage.routeName: (context) => const OrderPage(),

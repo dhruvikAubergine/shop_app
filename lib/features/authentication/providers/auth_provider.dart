@@ -5,6 +5,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shop_app/features/manage_product/modals/http_exception.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -13,11 +14,15 @@ class AuthProvider with ChangeNotifier {
   late String _userId;
 
   bool get isAuth {
-    return token.isNotEmpty;
+    return token != '';
+  }
+
+  String get userId {
+    return _userId;
   }
 
   String get token {
-    if (_token.isNotEmpty && _expiryDate.isAfter(DateTime.now())) {
+    if (_token != '' && _expiryDate.isAfter(DateTime.now())) {
       return _token;
     }
     return '';
@@ -55,6 +60,13 @@ class AuthProvider with ChangeNotifier {
         ),
       );
       notifyListeners();
+      final pref = await SharedPreferences.getInstance();
+      final userData = jsonEncode({
+        'token': _token,
+        'userId': _userId,
+        'expiryDate': _expiryDate.toIso8601String(),
+      });
+      await pref.setString('userData', userData);
     } catch (error) {
       rethrow;
     }
@@ -66,5 +78,35 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signUp(String email, String password) async {
     return authenticate(email, password, 'signUp');
+  }
+
+  Future<bool> tryAutoLogin() async {
+    final pref = await SharedPreferences.getInstance();
+    // await pref.clear();
+    if (!pref.containsKey('userData')) {
+      return false;
+    }
+    final extractedUSerData =
+        jsonDecode(pref.getString('userData')!) as Map<String, dynamic>;
+    final expiryDate =
+        DateTime.parse(extractedUSerData['expiryDate'] as String);
+
+    if (expiryDate.isBefore(DateTime.now())) {
+      return false;
+    }
+    _token = extractedUSerData['token'] as String;
+    _userId = extractedUSerData['userId'] as String;
+    _expiryDate = expiryDate;
+    notifyListeners();
+    return true;
+  }
+
+  Future<void> logout() async {
+    _token = '';
+    _expiryDate = DateTime.now();
+    _userId = '';
+    notifyListeners();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
   }
 }
