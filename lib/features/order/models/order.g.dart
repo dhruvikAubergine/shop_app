@@ -1,23 +1,23 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'new_order.dart';
+part of 'order.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-NewOrder _$NewOrderFromJson(Map<String, dynamic> json) => NewOrder(
+Order _$OrderFromJson(Map<String, dynamic> json) => Order(
       amount: (json['amount'] as num?)?.toDouble(),
       dateTime: json['dateTime'] == null
           ? null
           : DateTime.parse(json['dateTime'] as String),
       products: (json['products'] as List<dynamic>?)
-          ?.map((e) => NewCart.fromJson(e as Map<String, dynamic>))
+          ?.map((e) => Cart.fromJson(e as Map<String, dynamic>))
           .toList(),
       id: json['id'] as String?,
     );
 
-Map<String, dynamic> _$NewOrderToJson(NewOrder instance) {
+Map<String, dynamic> _$OrderToJson(Order instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {

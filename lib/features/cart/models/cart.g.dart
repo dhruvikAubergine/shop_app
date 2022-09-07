@@ -1,22 +1,22 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'new_cart.dart';
+part of 'cart.dart';
 
 // **************************************************************************
 // TypeAdapterGenerator
 // **************************************************************************
 
-class NewCartAdapter extends TypeAdapter<NewCart> {
+class CartAdapter extends TypeAdapter<Cart> {
   @override
   final int typeId = 0;
 
   @override
-  NewCart read(BinaryReader reader) {
+  Cart read(BinaryReader reader) {
     final numOfFields = reader.readByte();
     final fields = <int, dynamic>{
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
-    return NewCart(
+    return Cart(
       id: fields[0] as String?,
       title: fields[1] as String?,
       image: fields[2] as String?,
@@ -27,7 +27,7 @@ class NewCartAdapter extends TypeAdapter<NewCart> {
   }
 
   @override
-  void write(BinaryWriter writer, NewCart obj) {
+  void write(BinaryWriter writer, Cart obj) {
     writer
       ..writeByte(6)
       ..writeByte(0)
@@ -50,7 +50,7 @@ class NewCartAdapter extends TypeAdapter<NewCart> {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is NewCartAdapter &&
+      other is CartAdapter &&
           runtimeType == other.runtimeType &&
           typeId == other.typeId;
 }
@@ -59,7 +59,7 @@ class NewCartAdapter extends TypeAdapter<NewCart> {
 // JsonSerializableGenerator
 // **************************************************************************
 
-NewCart _$NewCartFromJson(Map<String, dynamic> json) => NewCart(
+Cart _$CartFromJson(Map<String, dynamic> json) => Cart(
       id: json['id'] as String?,
       title: json['title'] as String?,
       image: json['image'] as String?,
@@ -68,7 +68,7 @@ NewCart _$NewCartFromJson(Map<String, dynamic> json) => NewCart(
       productId: json['productId'] as String?,
     );
 
-Map<String, dynamic> _$NewCartToJson(NewCart instance) {
+Map<String, dynamic> _$CartToJson(Cart instance) {
   final val = <String, dynamic>{};
 
   void writeNotNull(String key, dynamic value) {

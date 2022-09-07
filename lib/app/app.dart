@@ -13,6 +13,7 @@ import 'package:shop_app/features/authentication/providers/auth_provider.dart';
 import 'package:shop_app/features/cart/pages/cart_page.dart';
 import 'package:shop_app/features/cart/provider/cart_provider.dart';
 import 'package:shop_app/features/favorite_product/pages/favorite_product_page%20.dart';
+import 'package:shop_app/features/home/models/product.dart';
 import 'package:shop_app/features/home/pages/product_details_page.dart';
 import 'package:shop_app/features/home/pages/product_overview_page.dart';
 import 'package:shop_app/features/home/provider/product_provider.dart';
@@ -29,7 +30,7 @@ class App extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider.value(value: AuthProvider()),
+        ChangeNotifierProvider(create: (context) => AuthProvider()),
         ChangeNotifierProxyProvider<AuthProvider, ProductProvider>(
           create: (context) => ProductProvider(
             Provider.of<AuthProvider>(context, listen: false).token,
@@ -89,8 +90,11 @@ class App extends StatelessWidget {
               OrderPage.routeName: (context) => const OrderPage(),
               UserProductPage.routeName: (context) => const UserProductPage(),
               EditProductPage.routeName: (context) => const EditProductPage(),
-              ProductDetailsPage.routeName: (context) =>
-                  const ProductDetailsPage(),
+              ProductDetailsPage.routeName: (context) {
+                final product =
+                    ModalRoute.of(context)!.settings.arguments! as Product;
+                return ProductDetailsPage(product: product);
+              },
               FavoriteProductPage.routeName: (context) =>
                   const FavoriteProductPage(),
               ProductOverviewPage.routeName: (context) =>

@@ -4,7 +4,7 @@ import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop_app/features/home/models/new_product.dart';
+import 'package:shop_app/features/home/models/product.dart';
 import 'package:shop_app/features/manage_product/modals/http_exception.dart';
 
 class ProductProvider with ChangeNotifier {
@@ -13,20 +13,20 @@ class ProductProvider with ChangeNotifier {
     this.userId,
     this._items,
   );
-  List<NewProduct> _items = [];
+  List<Product> _items = [];
 
   final String authToken;
   final String userId;
 
-  List<NewProduct> get items {
+  List<Product> get items {
     return _items;
   }
 
-  List<NewProduct> get favoriteItem {
+  List<Product> get favoriteItem {
     return _items.where((element) => element.isFavorite == true).toList();
   }
 
-  NewProduct findById(String id) {
+  Product findById(String id) {
     return _items.firstWhere((productId) => productId.id == id);
   }
 
@@ -42,7 +42,7 @@ class ProductProvider with ChangeNotifier {
     //     .firstWhere((productId) => productId.id == id)
     //     .copyWith(isFavorite: !oldFavorite);
 
-    notifyListeners();
+    // notifyListeners();
 
     final url = Uri.parse(
       'https://personal-expenses-e3eac-default-rtdb.firebaseio.com/userFavorites/$userId/$id.json?auth=$authToken',
@@ -66,7 +66,58 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<void> updateProduct(String id, NewProduct newProduct) async {
+  // void startTimer(Product product) {
+  //   product.startTimer();
+  //   // notifyListeners();
+  // }
+
+  // String? minutes;
+  // String? seconds;
+  // String? hours;
+
+  // void getMinutes(Product product) {
+  //   minutes = product.minutes;
+  // }
+
+  // void getHours(Product product) {
+  //   hours = product.hours;
+  // }
+
+  // void getSeconds(Product product) {
+  //   seconds = product.seconds;
+  // }
+
+  // String? hours;
+  // String? minutes;
+  // String? seconds;
+
+  // Duration duration = const Duration();
+  // void startTimer(Product product) {
+  //   duration = const Duration(minutes: 10);
+  //   product.timer = Timer.periodic(const Duration(seconds: 1), (_) {
+  //     final secound = duration.inSeconds - 1;
+  //     duration = Duration(seconds: secound);
+
+  //     if (secound <= 0) {
+  //       product.timer?.cancel();
+  //     }
+  //     log(duration.inSeconds.toString());
+  //     seconds = twoDigits(duration.inSeconds.remainder(60));
+  //     hours = twoDigits(duration.inHours.remainder(60));
+  //     minutes = twoDigits(duration.inMinutes.remainder(60));
+  //   });
+  //   notifyListeners();
+  // }
+
+  // String twoDigits(int n) {
+  //   return n.toString().padLeft(2, '0');
+  // }
+
+  // String get getSeconds => seconds ?? '00';
+  // String get getHours => hours ?? '00';
+  // String get getMinutes => minutes ?? '00';
+
+  Future<void> updateProduct(String id, Product newProduct) async {
     final productIndex = _items.indexWhere((element) => element.id == id);
     if (productIndex >= 0) {
       final url = Uri.parse(
@@ -114,6 +165,57 @@ class ProductProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  void setDurationForItem(String id, DateTime duration) {
+    try {
+      _items.firstWhere((element) {
+        if (element.id == id) {
+          element.duration = duration;
+          notifyListeners();
+          return true;
+        }
+        notifyListeners();
+        return false;
+      });
+    } catch (error) {
+      log(error.toString());
+    }
+  }
+
+  
+
+  // bool isSaleOn = true;
+  // bool checkSalesAvailability(String id) {
+  //   checkDuration(id);
+  //   return isSaleOn;
+  // }
+
+  // void checkDuration(String id) {
+  //   final index = _items.indexWhere((element) => element.id == id);
+  //   if (_items[index].duration == null) {
+  //     isSaleOn = true;
+  //     notifyListeners();
+  //     return;
+  //   }
+  //   if (_items[index].duration!.isBefore(DateTime.now())) {
+  //     isSaleOn = true;
+  //     notifyListeners();
+  //     return;
+  //   }
+  //   isSaleOn = false;
+  //   notifyListeners();
+  //   return;
+//}
+  // _items.firstWhere((element) {
+  //   if (element.id == id) {
+  //     if (element.duration != null &&
+  //         element.duration!.isBefore(DateTime.now())) {
+  //       return true;
+  //     }
+  //     return false;
+  //   }
+  //   return false;
+  // });
+
   Future<void> fetchProducts([bool filterByUser = false]) async {
     final filterString =
         filterByUser ? 'orderBy="userId"&equalTo="$userId"' : '';
@@ -151,18 +253,20 @@ class ProductProvider with ChangeNotifier {
       );
       final favoriteResponse = await http.get(favoriteUrl);
       final favoriteData = jsonDecode(favoriteResponse.body);
-      final loadedProduct = <NewProduct>[];
+      final loadedProduct = <Product>[];
       (jsonDecode(response.body) as Map<String, dynamic>).forEach((key, value) {
         (value as Map<String, dynamic>).putIfAbsent('id', () => key);
         value.putIfAbsent(
           'isFavorite',
           () => favoriteData == null ? false : favoriteData[key] ?? false,
         );
-        loadedProduct.add(NewProduct.fromJson(value));
+
+        
+        loadedProduct.add(Product.fromJson(value));
+        
       });
 
       _items = loadedProduct;
-
       notifyListeners();
 
       log(jsonEncode(response.body));
@@ -172,7 +276,7 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addProduct(NewProduct product) async {
+  Future<void> addProduct(Product product) async {
     final url = Uri.parse(
       'https://personal-expenses-e3eac-default-rtdb.firebaseio.com//products.json?auth=$authToken',
     );
@@ -189,7 +293,7 @@ class ProductProvider with ChangeNotifier {
       );
 
       log(json.decode(response.body).toString());
-      final newProduct = NewProduct(
+      final newProduct = Product(
         id: json.decode(response.body)['name'].toString(),
         title: product.title,
         price: product.price,

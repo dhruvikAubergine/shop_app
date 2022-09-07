@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/features/home/models/new_product.dart';
+import 'package:shop_app/features/home/models/product.dart';
 import 'package:shop_app/features/home/provider/product_provider.dart';
 import 'package:shop_app/features/manage_product/pages/edit_product_page.dart';
 
 class UserProductItem extends StatelessWidget {
   const UserProductItem({super.key, required this.product});
-  final NewProduct product;
+  final Product product;
 
   @override
   Widget build(BuildContext context) {

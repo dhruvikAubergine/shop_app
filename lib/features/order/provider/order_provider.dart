@@ -3,16 +3,16 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop_app/features/cart/models/new_cart.dart';
-import 'package:shop_app/features/order/models/new_order.dart';
+import 'package:shop_app/features/cart/models/cart.dart';
+import 'package:shop_app/features/order/models/order.dart';
 
 class OrderProvider with ChangeNotifier {
   OrderProvider(this.authToken, this.userId, this._orders);
-  List<NewOrder> _orders = [];
+  List<Order> _orders = [];
   final String authToken;
   final String userId;
 
-  List<NewOrder> get orderitems {
+  List<Order> get orderitems {
     return _orders;
   }
 
@@ -25,12 +25,12 @@ class OrderProvider with ChangeNotifier {
       log(json.decode(response.body).toString());
 
       if (jsonDecode(response.body) != null) {
-        final loadedOrders = <NewOrder>[];
+        final loadedOrders = <Order>[];
 
         (jsonDecode(response.body) as Map<String, dynamic>)
             .forEach((key, value) {
           (value as Map<String, dynamic>).putIfAbsent('id', () => key);
-          loadedOrders.add(NewOrder.fromJson(value));
+          loadedOrders.add(Order.fromJson(value));
         });
 
         // final extractedData =
@@ -46,7 +46,8 @@ class OrderProvider with ChangeNotifier {
         //       amount: order['amount'] as double,
         //       dateTime: DateTime.parse(order['dateTime'] as String),
         //       product:
-        //           (order['product'] as List<Map<String, dynamic>>).map((item) {
+        //           (order['product'] as List<Map<String, dynamic>>).map((item)
+        // {
         //         return Cart(
         //           id: item['id'] as String,
         //           price: item['price'] as double,
@@ -68,13 +69,13 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addOrder(List<NewCart> cartProduct, double total) async {
+  Future<void> addOrder(List<Cart> cartProduct, double total) async {
     final timestamp = DateTime.now();
     final url = Uri.parse(
       'https://personal-expenses-e3eac-default-rtdb.firebaseio.com//orders/$userId.json?auth=$authToken',
     );
     final order =
-        NewOrder(amount: total, dateTime: timestamp, products: cartProduct);
+        Order(amount: total, dateTime: timestamp, products: cartProduct);
     final response = await http.post(
       url,
       body: jsonEncode(order.toJson()),

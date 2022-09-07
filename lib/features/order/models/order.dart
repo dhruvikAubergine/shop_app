@@ -1,29 +1,29 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
-import 'package:shop_app/features/cart/models/new_cart.dart';
+import 'package:shop_app/features/cart/models/cart.dart';
 
-part 'new_order.g.dart';
+part 'order.g.dart';
 
 @JsonSerializable()
-class NewOrder extends Equatable {
-  const NewOrder({this.amount, this.dateTime, this.products, this.id});
-  factory NewOrder.fromJson(Map<String, dynamic> json) {
-    return _$NewOrderFromJson(json);
+class Order extends Equatable {
+  const Order({this.amount, this.dateTime, this.products, this.id});
+  factory Order.fromJson(Map<String, dynamic> json) {
+    return _$OrderFromJson(json);
   }
   final double? amount;
   final DateTime? dateTime;
-  final List<NewCart>? products;
+  final List<Cart>? products;
   final String? id;
 
-  Map<String, dynamic> toJson() => _$NewOrderToJson(this);
+  Map<String, dynamic> toJson() => _$OrderToJson(this);
 
-  NewOrder copyWith({
+  Order copyWith({
     double? amount,
     DateTime? dateTime,
-    List<NewCart>? products,
+    List<Cart>? products,
     String? id,
   }) {
-    return NewOrder(
+    return Order(
       amount: amount ?? this.amount,
       dateTime: dateTime ?? this.dateTime,
       products: products ?? this.products,

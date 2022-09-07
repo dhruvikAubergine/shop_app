@@ -13,9 +13,8 @@ class FavoriteProductPage extends StatelessWidget {
         centerTitle: true,
         title: const Text('Favorite'),
       ),
-      
       drawer: const AppDrawer(),
-      body:  const ProductGrid(showFavoriteOnly: true),
+      body: const ProductGrid(showFavoriteOnly: true),
     );
   }
 }

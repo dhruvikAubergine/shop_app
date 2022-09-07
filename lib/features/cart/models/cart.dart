@@ -2,12 +2,12 @@ import 'package:equatable/equatable.dart';
 import 'package:hive/hive.dart';
 import 'package:json_annotation/json_annotation.dart';
 
-part 'new_cart.g.dart';
+part 'cart.g.dart';
 
 @JsonSerializable()
 @HiveType(typeId: 0)
-class NewCart extends Equatable {
-  const NewCart({
+class Cart extends Equatable {
+  const Cart({
     this.id,
     this.title,
     this.image,
@@ -16,8 +16,8 @@ class NewCart extends Equatable {
     this.productId,
   });
 
-  factory NewCart.fromJson(Map<String, dynamic> json) {
-    return _$NewCartFromJson(json);
+  factory Cart.fromJson(Map<String, dynamic> json) {
+    return _$CartFromJson(json);
   }
   @HiveField(0)
   final String? id;
@@ -32,9 +32,9 @@ class NewCart extends Equatable {
   @HiveField(5)
   final String? productId;
 
-  Map<String, dynamic> toJson() => _$NewCartToJson(this);
+  Map<String, dynamic> toJson() => _$CartToJson(this);
 
-  NewCart copyWith({
+  Cart copyWith({
     String? id,
     String? title,
     String? image,
@@ -42,7 +42,7 @@ class NewCart extends Equatable {
     double? quantity,
     String? productId,
   }) {
-    return NewCart(
+    return Cart(
       id: id ?? this.id,
       title: title ?? this.title,
       image: image ?? this.image,

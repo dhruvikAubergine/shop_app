@@ -21,24 +21,40 @@ class ProductOverviewPage extends StatefulWidget {
 }
 
 class _ProductOverviewPageState extends State<ProductOverviewPage> {
-  // final _showFavoriteOnly = false;
   var _isint = true;
   var _isLoading = false;
 
+  // Future<void> _fetchProductsData() async {
+  //   if (_isint) {
+  //     await Provider.of<ProductProvider>(context, listen: false)
+  //         .fetchProducts();
+  //   }
+  // }
+
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   setState(() {
+  //     _isLoading = true;
+  //   });
+  //   _fetchProductsData();
+  //   setState(() {
+  //     _isLoading = false;
+  //     _isint = false;
+  //   });
+  // }
   @override
   void didChangeDependencies() {
     setState(() {
       _isLoading = true;
     });
     if (_isint) {
-      Provider.of<ProductProvider>(context)
-          .fetchProducts()
-          .then((value) => _isLoading = false);
+      Provider.of<ProductProvider>(context, listen: false).fetchProducts();
     }
     setState(() {
       _isLoading = false;
+      _isint = false;
     });
-    _isint = false;
     super.didChangeDependencies();
   }
 
@@ -89,9 +105,7 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
       drawer: const AppDrawer(),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(
-                color: Colors.black,
-              ),
+              child: CircularProgressIndicator(),
             )
           : const ProductGrid(showFavoriteOnly: false),
     );

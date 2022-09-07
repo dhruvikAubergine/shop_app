@@ -11,7 +11,7 @@ import 'dart:developer';
 import 'package:bloc/bloc.dart';
 import 'package:flutter/widgets.dart';
 import 'package:hive_flutter/adapters.dart';
-import 'package:shop_app/features/cart/models/new_cart.dart';
+import 'package:shop_app/features/cart/models/cart.dart';
 
 class AppBlocObserver extends BlocObserver {
   @override
@@ -31,7 +31,7 @@ Future<void> bootstrap(FutureOr<Widget> Function() builder) async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
-  Hive.registerAdapter(NewCartAdapter());
+  Hive.registerAdapter(CartAdapter());
 
   await Hive.openBox('Cart Box');
 

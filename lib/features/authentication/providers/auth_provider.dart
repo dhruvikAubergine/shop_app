@@ -11,7 +11,7 @@ import 'package:shop_app/features/manage_product/modals/http_exception.dart';
 class AuthProvider with ChangeNotifier {
   String _token = '';
   late DateTime _expiryDate;
-  late String _userId;
+  String _userId = '';
 
   bool get isAuth {
     return token != '';

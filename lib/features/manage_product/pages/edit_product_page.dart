@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/features/home/models/new_product.dart';
+import 'package:shop_app/features/home/models/product.dart';
 import 'package:shop_app/features/home/provider/product_provider.dart';
 import 'package:shop_app/features/manage_product/widgets/user_product_item.dart';
 
@@ -32,7 +32,7 @@ class _EditProductPageState extends State<EditProductPage> {
     }
 
     _formKey.currentState?.save();
-    final product = NewProduct(
+    final product = Product(
       id: productId == '' ? DateTime.now().toString() : productId,
       title: _titleController.text,
       description: _descriptionController.text,

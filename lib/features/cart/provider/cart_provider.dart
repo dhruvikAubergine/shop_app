@@ -2,20 +2,20 @@ import 'dart:developer';
 
 import 'package:flutter/widgets.dart';
 import 'package:hive/hive.dart';
-import 'package:shop_app/features/cart/models/new_cart.dart';
+import 'package:shop_app/features/cart/models/cart.dart';
 
 class CartProvider with ChangeNotifier {
   // final Map<String, NewCart> _items = {};
   final cartBox = Hive.box('Cart Box');
 
-  Map<String, NewCart> get items {
+  Map<String, Cart> get items {
     // return {..._items};
-    final _items = <String, NewCart>{};
+    final _items = <String, Cart>{};
     final keys = cartBox.keys.toList();
     final values = cartBox.values.toList();
 
     for (var i = 0; i < keys.length; i++) {
-      _items[keys[i].toString()] = values[i] as NewCart;
+      _items[keys[i].toString()] = values[i] as Cart;
     }
     return _items;
   }
@@ -110,7 +110,8 @@ class CartProvider with ChangeNotifier {
     //   await prefs.setString('cartData', jsonEncode(decodedCartData));
 
     //   _items =
-    //       decodedCartData.map((key, value) => MapEntry(key, value as NewCart));
+    //       decodedCartData.map((key, value) =>
+    //MapEntry(key, value as NewCart));
     //   notifyListeners();
     //   log('shred prefs items');
     //   log(decodedCartData.toString());
@@ -138,7 +139,7 @@ class CartProvider with ChangeNotifier {
     // }
 
     if (cartBox.containsKey(productId)) {
-      final existingValue = cartBox.get(productId) as NewCart;
+      final existingValue = cartBox.get(productId) as Cart;
       await cartBox.put(
         productId,
         existingValue.copyWith(quantity: existingValue.quantity! + 1),
@@ -146,7 +147,7 @@ class CartProvider with ChangeNotifier {
     } else {
       await cartBox.put(
         productId,
-        NewCart(
+        Cart(
           id: DateTime.now().toString(),
           price: price,
           title: title,
