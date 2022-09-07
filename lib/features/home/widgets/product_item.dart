@@ -20,7 +20,6 @@ class _ProductItemState extends State<ProductItem> {
   Widget build(BuildContext context) {
     final product = Provider.of<ProductProvider>(context).findById(widget.id);
     final auth = Provider.of<AuthProvider>(context);
-    // final cart = Provider.of<CartProvider>(context);
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
       child: GridTile(

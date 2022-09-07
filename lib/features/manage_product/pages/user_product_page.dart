@@ -23,14 +23,13 @@ class _UserProductPageState extends State<UserProductPage> {
   @override
   void didChangeDependencies() {
     setState(() => _isLoading = true);
-    Provider.of<ProductProvider>(context,listen: false).fetchProducts(true);
+    Provider.of<ProductProvider>(context, listen: false).fetchProducts(true);
     setState(() => _isLoading = false);
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    // final product = Provider.of<ProductProvider>(context);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,

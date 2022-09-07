@@ -33,39 +33,6 @@ class Product extends Equatable {
   DateTime? duration;
   bool checkSalesAvailability;
 
-  // void startTimer() {
-  //   duration = const Duration(minutes: 1);
-  //   timer = Timer.periodic(const Duration(seconds: 1), (_) {
-  //     addTime();
-  //     notifyListeners();
-  //   });
-  // }
-
-  // String? minute;
-  // String? hour;
-  // String? second;
-  // void addTime() {
-  //   final secound = duration.inSeconds - 1;
-  //   duration = Duration(seconds: secound);
-
-  //   if (secound <= 0) {
-  //     timer?.cancel();
-  //   }
-  //   log(duration.inSeconds.toString());
-  //   second = twoDigits(duration.inSeconds.remainder(60));
-  //   minute = twoDigits(duration.inMinutes.remainder(60));
-  //   hour = twoDigits(duration.inHours.remainder(60));
-  //   notifyListeners();
-  // }
-
-  // String twoDigits(int n) {
-  //   return n.toString().padLeft(2, '0');
-  // }
-
-  // String get minutes => twoDigits(duration.inMinutes.remainder(60));
-  // String get seconds => twoDigits(duration.inSeconds.remainder(60));
-  // String get hours => twoDigits(duration.inHours.remainder(60));
-
   Map<String, dynamic> toJson() => _$ProductToJson(this);
 
   Product copyWith({

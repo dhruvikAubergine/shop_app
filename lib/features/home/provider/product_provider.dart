@@ -38,12 +38,6 @@ class ProductProvider with ChangeNotifier {
         .firstWhere((productId) => productId.id == id)
         .toggleFavoriteStatus(id);
 
-    // _items
-    //     .firstWhere((productId) => productId.id == id)
-    //     .copyWith(isFavorite: !oldFavorite);
-
-    // notifyListeners();
-
     final url = Uri.parse(
       'https://personal-expenses-e3eac-default-rtdb.firebaseio.com/userFavorites/$userId/$id.json?auth=$authToken',
     );
@@ -65,57 +59,6 @@ class ProductProvider with ChangeNotifier {
       notifyListeners();
     }
   }
-
-  // void startTimer(Product product) {
-  //   product.startTimer();
-  //   // notifyListeners();
-  // }
-
-  // String? minutes;
-  // String? seconds;
-  // String? hours;
-
-  // void getMinutes(Product product) {
-  //   minutes = product.minutes;
-  // }
-
-  // void getHours(Product product) {
-  //   hours = product.hours;
-  // }
-
-  // void getSeconds(Product product) {
-  //   seconds = product.seconds;
-  // }
-
-  // String? hours;
-  // String? minutes;
-  // String? seconds;
-
-  // Duration duration = const Duration();
-  // void startTimer(Product product) {
-  //   duration = const Duration(minutes: 10);
-  //   product.timer = Timer.periodic(const Duration(seconds: 1), (_) {
-  //     final secound = duration.inSeconds - 1;
-  //     duration = Duration(seconds: secound);
-
-  //     if (secound <= 0) {
-  //       product.timer?.cancel();
-  //     }
-  //     log(duration.inSeconds.toString());
-  //     seconds = twoDigits(duration.inSeconds.remainder(60));
-  //     hours = twoDigits(duration.inHours.remainder(60));
-  //     minutes = twoDigits(duration.inMinutes.remainder(60));
-  //   });
-  //   notifyListeners();
-  // }
-
-  // String twoDigits(int n) {
-  //   return n.toString().padLeft(2, '0');
-  // }
-
-  // String get getSeconds => seconds ?? '00';
-  // String get getHours => hours ?? '00';
-  // String get getMinutes => minutes ?? '00';
 
   Future<void> updateProduct(String id, Product newProduct) async {
     final productIndex = _items.indexWhere((element) => element.id == id);
@@ -161,7 +104,6 @@ class ProductProvider with ChangeNotifier {
       notifyListeners();
       throw HttpException('Could not delete product.');
     }
-    // existingProduct = null;
     notifyListeners();
   }
 
@@ -181,41 +123,6 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
-  
-
-  // bool isSaleOn = true;
-  // bool checkSalesAvailability(String id) {
-  //   checkDuration(id);
-  //   return isSaleOn;
-  // }
-
-  // void checkDuration(String id) {
-  //   final index = _items.indexWhere((element) => element.id == id);
-  //   if (_items[index].duration == null) {
-  //     isSaleOn = true;
-  //     notifyListeners();
-  //     return;
-  //   }
-  //   if (_items[index].duration!.isBefore(DateTime.now())) {
-  //     isSaleOn = true;
-  //     notifyListeners();
-  //     return;
-  //   }
-  //   isSaleOn = false;
-  //   notifyListeners();
-  //   return;
-//}
-  // _items.firstWhere((element) {
-  //   if (element.id == id) {
-  //     if (element.duration != null &&
-  //         element.duration!.isBefore(DateTime.now())) {
-  //       return true;
-  //     }
-  //     return false;
-  //   }
-  //   return false;
-  // });
-
   Future<void> fetchProducts([bool filterByUser = false]) async {
     final filterString =
         filterByUser ? 'orderBy="userId"&equalTo="$userId"' : '';
@@ -224,26 +131,6 @@ class ProductProvider with ChangeNotifier {
     );
     try {
       final response = await http.get(url);
-      // final extractedData = json.decode(response.body) as Map<String, dynamic>;
-      // final loadedProduct = <NewProduct>[];
-      // if (extractedData.isEmpty) return;
-      // extractedData.forEach((productId, product) {
-      //   loadedProduct.add(
-      //     NewProduct(
-      //       id: productId,
-      //       title: product['title'] as String,
-      //       price: product['price'] as double,
-      //       imageUrl: product['imageUrl'] as String,
-      //       description: product['description'] as String,
-      //       isFavorite: product['isFavorite'] as bool,
-      //     ),
-      //   );
-      //   _items = loadedProduct;
-      //   log(jsonEncode(loadedProduct));
-      //   notifyListeners();
-      // });
-      // log(jsonEncode(response.body));
-      // log(json.decode(response.body).toString());
 
       if (jsonDecode(response.body) == null) return;
       log(response.body);
@@ -261,9 +148,7 @@ class ProductProvider with ChangeNotifier {
           () => favoriteData == null ? false : favoriteData[key] ?? false,
         );
 
-        
         loadedProduct.add(Product.fromJson(value));
-        
       });
 
       _items = loadedProduct;

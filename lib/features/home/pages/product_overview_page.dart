@@ -24,25 +24,6 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
   var _isint = true;
   var _isLoading = false;
 
-  // Future<void> _fetchProductsData() async {
-  //   if (_isint) {
-  //     await Provider.of<ProductProvider>(context, listen: false)
-  //         .fetchProducts();
-  //   }
-  // }
-
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   setState(() {
-  //     _isLoading = true;
-  //   });
-  //   _fetchProductsData();
-  //   setState(() {
-  //     _isLoading = false;
-  //     _isint = false;
-  //   });
-  // }
   @override
   void didChangeDependencies() {
     setState(() {
@@ -66,26 +47,6 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
         centerTitle: true,
         title: const Text('Shop app'),
         actions: [
-          // PopupMenuButton(
-          //   icon: const Icon(Icons.more_vert_rounded),
-          //   onSelected: (FilterOption value) {
-          //     if (value == FilterOption.all) {
-          //       setState(() => _showFavoriteOnly = false);
-          //     } else {
-          //       setState(() => _showFavoriteOnly = true);
-          //     }
-          //   },
-          //   itemBuilder: (context) => [
-          //     const PopupMenuItem(
-          //       value: FilterOption.all,
-          //       child: Text('Show all'),
-          //     ),
-          //     const PopupMenuItem(
-          //       value: FilterOption.favorite,
-          //       child: Text('Show only favorite'),
-          //     ),
-          //   ],
-          // ),
           Badge(
             badgeColor: Colors.transparent,
             position: BadgePosition.topEnd(

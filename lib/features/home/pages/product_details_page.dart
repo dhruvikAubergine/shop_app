@@ -15,15 +15,6 @@ class ProductDetailsPage extends StatefulWidget {
 }
 
 class _ProductDetailsPageState extends State<ProductDetailsPage> {
-  // @override
-  // void initState() {
-  //   super.initState();
-  //   SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
-  //     if (!(widget.product.timer?.isActive ?? false)) {
-  //       widget.product.startTimer();
-  //     }
-  //   });
-  // }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -77,12 +68,6 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     const SnackBar(
                       content: Text('Added item to cart'),
                       duration: Duration(seconds: 3),
-                      // action: SnackBarAction(
-                      //   label: 'Undo',
-                      //   onPressed: () {
-                      //     // cart.removeSingleItem(product.id ?? '');
-                      //   },
-                      // ),
                     ),
                   );
                 },
