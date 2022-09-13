@@ -7,6 +7,8 @@ part of 'order.dart';
 // **************************************************************************
 
 Order _$OrderFromJson(Map<String, dynamic> json) => Order(
+      deliveryCharge: (json['deliveryCharge'] as num?)?.toDouble(),
+      tax: (json['tax'] as num?)?.toDouble(),
       amount: (json['amount'] as num?)?.toDouble(),
       dateTime: json['dateTime'] == null
           ? null
@@ -30,5 +32,7 @@ Map<String, dynamic> _$OrderToJson(Order instance) {
   writeNotNull('dateTime', instance.dateTime?.toIso8601String());
   writeNotNull('products', instance.products);
   writeNotNull('id', instance.id);
+  writeNotNull('deliveryCharge', instance.deliveryCharge);
+  writeNotNull('tax', instance.tax);
   return val;
 }

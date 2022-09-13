@@ -6,15 +6,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shop_app/features/authentication/modals/address.dart';
+import 'package:shop_app/features/authentication/modals/user.dart';
 import 'package:shop_app/features/manage_product/modals/http_exception.dart';
 
 class AuthProvider with ChangeNotifier {
   String _token = '';
   late DateTime _expiryDate;
   String _userId = '';
+  Address _address = const Address();
 
   bool get isAuth {
     return token != '';
+  }
+
+  Address get address {
+    return _address;
   }
 
   String get userId {
@@ -26,6 +33,22 @@ class AuthProvider with ChangeNotifier {
       return _token;
     }
     return '';
+  }
+
+  Future<void> getAddress() async {
+    final url = Uri.parse(
+      'https://personal-expenses-e3eac-default-rtdb.firebaseio.com/users/$userId.json/?auth=$token',
+    );
+    try {
+      final response = await http.get(url);
+      final userData = jsonDecode(response.body) as Map<String, dynamic>;
+      final user = User.fromJson(userData);
+      _address = user.address!;
+      notifyListeners();
+    } catch (error) {
+      log('$error');
+      rethrow;
+    }
   }
 
   Future<void> authenticate(
@@ -78,6 +101,27 @@ class AuthProvider with ChangeNotifier {
 
   Future<void> signUp(String email, String password) async {
     return authenticate(email, password, 'signUp');
+  }
+
+  Future<void> addUserDetails(User user, String password) async {
+    try {
+      final url = Uri.parse(
+        'https://personal-expenses-e3eac-default-rtdb.firebaseio.com/users/$userId.json?auth=$token',
+      );
+
+      final response = await http.put(
+        url,
+        body: jsonEncode(user.toJson()),
+        // body: jsonEncode({
+        //   'email' :user.email,
+        //   'name' :user.name,
+        //   'phone':user.phone,
+        //   'address':user.address,
+        // }),
+      );
+    } catch (error) {
+      log(error.toString());
+    }
   }
 
   Future<bool> tryAutoLogin() async {

@@ -43,13 +43,23 @@ class OrderProvider with ChangeNotifier {
     }
   }
 
-  Future<void> addOrder(List<Cart> cartProduct, double total) async {
+  Future<void> addOrder(
+    List<Cart> cartProduct,
+    double total,
+    double deliveryCharge,
+    double tax,
+  ) async {
     final timestamp = DateTime.now();
     final url = Uri.parse(
       'https://personal-expenses-e3eac-default-rtdb.firebaseio.com//orders/$userId.json?auth=$authToken',
     );
-    final order =
-        Order(amount: total, dateTime: timestamp, products: cartProduct);
+    final order = Order(
+      amount: total,
+      dateTime: timestamp,
+      products: cartProduct,
+      deliveryCharge: deliveryCharge,
+      tax: tax,
+    );
     final response = await http.post(
       url,
       body: jsonEncode(order.toJson()),

@@ -21,6 +21,7 @@ class CartItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardProvider = Provider.of<CartProvider>(context, listen: false);
     return Dismissible(
       key: ValueKey(id),
       direction: DismissDirection.endToStart,
@@ -55,7 +56,7 @@ class CartItem extends StatelessWidget {
         );
       },
       onDismissed: (direction) {
-        Provider.of<CartProvider>(context, listen: false).removeItem(productId);
+        cardProvider.removeItem(productId);
       },
       background: Container(
         alignment: Alignment.center,
@@ -77,7 +78,49 @@ class CartItem extends StatelessWidget {
           ),
           title: Text(title),
           subtitle: Text('\$$price'),
-          trailing: Text('${quantity.toInt()}X'),
+          trailing: FittedBox(
+            fit: BoxFit.fill,
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    if (quantity > 1) {
+                      cardProvider.addOrRemoveQuantity(
+                        id: productId,
+                        isForAdd: false,
+                      );
+                    } else if (quantity == 1) {
+                      cardProvider
+                        ..addOrRemoveQuantity(
+                          id: productId,
+                          isForAdd: false,
+                        )
+                        ..removeItem(productId);
+                    } else {
+                      cardProvider.removeItem(productId);
+                    }
+                  },
+                  icon: Icon(
+                    Icons.remove_circle,
+                    color: Theme.of(context).primaryColor,
+                  ),
+                ),
+                Text(
+                  '${quantity.toInt()}',
+                ),
+                IconButton(
+                  onPressed: () {
+                    cardProvider.addOrRemoveQuantity(
+                      id: productId,
+                      isForAdd: true,
+                    );
+                  },
+                  icon: const Icon(Icons.add_circle),
+                  color: Theme.of(context).primaryColor,
+                ),
+              ],
+            ),
+          ),
         ),
       ),
     );

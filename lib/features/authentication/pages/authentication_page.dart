@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/features/authentication/pages/sign_up_page.dart';
 import 'package:shop_app/features/authentication/providers/auth_provider.dart';
 import 'package:shop_app/features/home/pages/product_overview_page.dart';
 import 'package:shop_app/features/manage_product/modals/http_exception.dart';
 
 class AuthenticationPage extends StatefulWidget {
   const AuthenticationPage({super.key});
+  static const routeName = '/login-page';
 
   @override
   State<AuthenticationPage> createState() => _AuthenticationPageState();
@@ -18,7 +20,7 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
-  bool _authModeLogIn = true;
+  final bool _authModeLogIn = true;
   bool _isPasswordVisible = false;
   bool _isConfirmPasswordVisible = false;
 
@@ -30,27 +32,16 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
     final email = _emailController.text.trim();
     final passowrd = _passwordController.text.trim();
     try {
-      if (_authModeLogIn) {
-        await Provider.of<AuthProvider>(context, listen: false)
-            .logIn(email, passowrd);
+      await Provider.of<AuthProvider>(context, listen: false)
+          .logIn(email, passowrd);
 
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Log in successfully'),
-          ),
-        );
-      } else {
-        await Provider.of<AuthProvider>(context, listen: false)
-            .signUp(email, passowrd);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Log in successfully'),
+        ),
+      );
 
-        if (!mounted) return;
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('Sign up successfully'),
-          ),
-        );
-      }
       if (!mounted) return;
       await Navigator.of(context).pushNamed(ProductOverviewPage.routeName);
     } on HttpException catch (error) {
@@ -201,26 +192,22 @@ class _AuthenticationPageState extends State<AuthenticationPage> {
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(15),
                 ),
-                child: Text(
-                  _authModeLogIn ? 'Log In' : 'Sign Up',
-                  style: const TextStyle(fontSize: 20, color: Colors.white),
+                child: const Text(
+                  'Log In',
+                  style: TextStyle(fontSize: 20, color: Colors.white),
                 ),
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text(
-                    _authModeLogIn
-                        ? "Dont't have an account?"
-                        : 'Already have an account?',
+                  const Text(
+                    "Dont't have an account?",
                   ),
                   TextButton(
                     onPressed: () {
-                      setState(() {
-                        _authModeLogIn = !_authModeLogIn;
-                      });
+                      Navigator.of(context).pushNamed(SignUpPage.routeName);
                     },
-                    child: Text(!_authModeLogIn ? 'Log In' : 'Sign Up'),
+                    child: const Text('Sign Up'),
                   )
                 ],
               )

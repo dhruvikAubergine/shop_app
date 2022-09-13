@@ -42,6 +42,9 @@ class _TimerWidgetState extends State<TimerWidget> {
 
     if (secound < 0) {
       widget.product.checkSalesAvailability = false;
+      Provider.of<ProductProvider>(context, listen: false)
+          .salesOff(widget.product.id!);
+      // widget.product.price = (widget.product.price! * 100) / 80;
       cancelTimer();
     }
     duration = Duration(seconds: secound);

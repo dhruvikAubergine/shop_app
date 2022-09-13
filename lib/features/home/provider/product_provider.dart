@@ -123,6 +123,12 @@ class ProductProvider with ChangeNotifier {
     }
   }
 
+  void salesOff(String id) {
+    final product = _items.firstWhere((element) => element.id == id);
+    product.price = (product.price! * 100) / 80;
+    notifyListeners();
+  }
+
   Future<void> fetchProducts([bool filterByUser = false]) async {
     final filterString =
         filterByUser ? 'orderBy="userId"&equalTo="$userId"' : '';
@@ -147,7 +153,7 @@ class ProductProvider with ChangeNotifier {
           'isFavorite',
           () => favoriteData == null ? false : favoriteData[key] ?? false,
         );
-
+        value['price'] = value['price'] - value['price'] * 0.20;
         loadedProduct.add(Product.fromJson(value));
       });
 

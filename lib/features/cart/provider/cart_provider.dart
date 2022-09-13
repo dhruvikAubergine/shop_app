@@ -25,7 +25,7 @@ class CartProvider with ChangeNotifier {
   double get totalAmount {
     var total = 0.0;
     cartBox.toMap().forEach((key, value) {
-      total = value.price! * (value.quantity!) as double;
+      total += value.price! * (value.quantity!) as double;
     });
 
     return total;
@@ -41,26 +41,29 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  // void removeSingleItem(String productId) {
-  //   if (!_items.containsKey(productId)) {
-  //     return;
-  //   }
-  //   if (_items[productId]!.quantity! > 1) {
-  //     _items.update(
-  //       productId,
-  //       (existingproduct) => NewCart(
-  //         id: existingproduct.id,
-  //         image: existingproduct.image,
-  //         price: existingproduct.price,
-  //         quantity: existingproduct.quantity! - 1,
-  //         title: existingproduct.title,
-  //       ),
-  //     );
-  //   } else {
-  //     _items.remove(productId);
-  //   }
-  //   notifyListeners();
-  // }
+  Future<void> addOrRemoveQuantity({
+    required String id,
+    required bool isForAdd,
+  }) async {
+    if (cartBox.containsKey(id)) {
+      final existingValue = cartBox.get(id) as Cart;
+      if (isForAdd) {
+        await cartBox.put(
+          id,
+          existingValue.copyWith(quantity: existingValue.quantity! + 1),
+        );
+        notifyListeners();
+        log(cartBox.get(id).toString());
+      } else {
+        await cartBox.put(
+          id,
+          existingValue.copyWith(quantity: existingValue.quantity! - 1),
+        );
+        notifyListeners();
+        log(cartBox.get(id).toString());
+      }
+    }
+  }
 
   Future<void> addItem(
     String productId,

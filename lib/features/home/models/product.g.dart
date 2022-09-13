@@ -16,6 +16,7 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
       imageUrl: json['imageUrl'] as String?,
       description: json['description'] as String?,
       isFavorite: json['isFavorite'] as bool? ?? false,
+      checkSalesAvailability: json['checkSalesAvailability'] as bool? ?? true,
     );
 
 Map<String, dynamic> _$ProductToJson(Product instance) {
@@ -29,10 +30,11 @@ Map<String, dynamic> _$ProductToJson(Product instance) {
 
   writeNotNull('id', instance.id);
   writeNotNull('title', instance.title);
-  writeNotNull('price', instance.price);
   writeNotNull('imageUrl', instance.imageUrl);
   writeNotNull('description', instance.description);
+  writeNotNull('price', instance.price);
   val['isFavorite'] = instance.isFavorite;
   writeNotNull('duration', instance.duration?.toIso8601String());
+  val['checkSalesAvailability'] = instance.checkSalesAvailability;
   return val;
 }

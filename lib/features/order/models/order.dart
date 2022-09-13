@@ -6,7 +6,14 @@ part 'order.g.dart';
 
 @JsonSerializable()
 class Order extends Equatable {
-  const Order({this.amount, this.dateTime, this.products, this.id});
+  const Order({
+    this.deliveryCharge,
+    this.tax,
+    this.amount,
+    this.dateTime,
+    this.products,
+    this.id,
+  });
   factory Order.fromJson(Map<String, dynamic> json) {
     return _$OrderFromJson(json);
   }
@@ -14,6 +21,8 @@ class Order extends Equatable {
   final DateTime? dateTime;
   final List<Cart>? products;
   final String? id;
+  final double? deliveryCharge;
+  final double? tax;
 
   Map<String, dynamic> toJson() => _$OrderToJson(this);
 
@@ -22,12 +31,16 @@ class Order extends Equatable {
     DateTime? dateTime,
     List<Cart>? products,
     String? id,
+    double? deliveryCharge,
+    double? tax,
   }) {
     return Order(
       amount: amount ?? this.amount,
       dateTime: dateTime ?? this.dateTime,
       products: products ?? this.products,
       id: id ?? this.id,
+      tax: tax ?? this.tax,
+      deliveryCharge: deliveryCharge ?? this.deliveryCharge,
     );
   }
 
@@ -35,5 +48,6 @@ class Order extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object?> get props => [amount, dateTime, products, id];
+  List<Object?> get props =>
+      [amount, dateTime, products, id, deliveryCharge, tax];
 }

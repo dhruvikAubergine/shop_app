@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:shop_app/features/order/models/order.dart';
+import 'package:shop_app/features/order/widgets/invoice.dart';
 
 class OrderItem extends StatefulWidget {
   const OrderItem({super.key, required this.order});
@@ -21,7 +22,7 @@ class _OrderItemState extends State<OrderItem> {
       child: Column(
         children: [
           ListTile(
-            title: Text('\$${widget.order.amount}'),
+            title: Text('\$${widget.order.amount!.toStringAsFixed(2)}'),
             subtitle:
                 Text(DateFormat.yMMMMd('en_US').format(widget.order.dateTime!)),
             trailing: IconButton(
@@ -37,7 +38,7 @@ class _OrderItemState extends State<OrderItem> {
               },
             ),
           ),
-          if (_expanded)
+          if (_expanded) ...[
             SizedBox(
               height: min(widget.order.products!.length * 10.0 + 50, 180),
               child: ListView(
@@ -68,6 +69,15 @@ class _OrderItemState extends State<OrderItem> {
                     .toList(),
               ),
             ),
+            TextButton(
+              onPressed: () => Navigator.pushNamed(
+                context,
+                Invoice.routeName,
+                arguments: widget.order,
+              ),
+              child: const Text('View Invoice'),
+            )
+          ]
         ],
       ),
     );
