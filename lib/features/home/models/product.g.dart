@@ -15,6 +15,7 @@ Product _$ProductFromJson(Map<String, dynamic> json) => Product(
           : DateTime.parse(json['duration'] as String),
       imageUrl: json['imageUrl'] as String?,
       description: json['description'] as String?,
+      taxPercentage: (json['taxPercentage'] as num?)?.toDouble(),
       isFavorite: json['isFavorite'] as bool? ?? false,
       checkSalesAvailability: json['checkSalesAvailability'] as bool? ?? true,
     );
@@ -36,5 +37,6 @@ Map<String, dynamic> _$ProductToJson(Product instance) {
   val['isFavorite'] = instance.isFavorite;
   writeNotNull('duration', instance.duration?.toIso8601String());
   val['checkSalesAvailability'] = instance.checkSalesAvailability;
+  writeNotNull('taxPercentage', instance.taxPercentage);
   return val;
 }

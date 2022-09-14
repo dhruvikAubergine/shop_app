@@ -53,13 +53,6 @@ class _UserProductPageState extends State<UserProductPage> {
                   },
                 ),
               ),
-              // : Center(
-              //     child: Image.asset(
-              //       'assets/images/No_Product_Found.png',
-              //       width: 250,
-              //       height: 250,
-              //     ),
-              //   ),
             ),
       floatingActionButton: FloatingActionButton(
         tooltip: 'Add Product',

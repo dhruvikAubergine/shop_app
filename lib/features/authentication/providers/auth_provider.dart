@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shop_app/features/authentication/modals/address.dart';
 import 'package:shop_app/features/authentication/modals/user.dart';
 import 'package:shop_app/features/manage_product/modals/http_exception.dart';
 
@@ -14,14 +13,14 @@ class AuthProvider with ChangeNotifier {
   String _token = '';
   late DateTime _expiryDate;
   String _userId = '';
-  Address _address = const Address();
+  User _user = const User();
 
   bool get isAuth {
     return token != '';
   }
 
-  Address get address {
-    return _address;
+  User get user {
+    return _user;
   }
 
   String get userId {
@@ -35,7 +34,7 @@ class AuthProvider with ChangeNotifier {
     return '';
   }
 
-  Future<void> getAddress() async {
+  Future<void> getUser() async {
     final url = Uri.parse(
       'https://personal-expenses-e3eac-default-rtdb.firebaseio.com/users/$userId.json/?auth=$token',
     );
@@ -43,7 +42,7 @@ class AuthProvider with ChangeNotifier {
       final response = await http.get(url);
       final userData = jsonDecode(response.body) as Map<String, dynamic>;
       final user = User.fromJson(userData);
-      _address = user.address!;
+      _user = user;
       notifyListeners();
     } catch (error) {
       log('$error');
@@ -112,13 +111,8 @@ class AuthProvider with ChangeNotifier {
       final response = await http.put(
         url,
         body: jsonEncode(user.toJson()),
-        // body: jsonEncode({
-        //   'email' :user.email,
-        //   'name' :user.name,
-        //   'phone':user.phone,
-        //   'address':user.address,
-        // }),
       );
+      log('$response');
     } catch (error) {
       log(error.toString());
     }

@@ -36,7 +36,7 @@ class OrderPriceWidget extends StatelessWidget {
             visualDensity: const VisualDensity(vertical: -4),
           ),
           ListTile(
-            title: const Text('Gov. Tax'),
+            title: const Text('Total Tax'),
             trailing: Text('\$${tax.toStringAsFixed(2)}'),
             visualDensity: const VisualDensity(vertical: -4),
           ),

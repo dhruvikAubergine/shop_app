@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:shop_app/features/authentication/modals/address.dart';
+import 'package:shop_app/features/authentication/modals/user.dart';
 import 'package:shop_app/features/authentication/providers/auth_provider.dart';
 import 'package:shop_app/features/cart/widgets/order_price_widget.dart';
 import 'package:shop_app/features/order/models/order.dart';
@@ -17,18 +17,26 @@ class Invoice extends StatefulWidget {
 class _InvoiceState extends State<Invoice> {
   late final Order order;
 
-  Address? address;
+  User? user;
+
+  final List<String> tableColumns = [
+    'Desc',
+    'Quantity',
+    'Price',
+    'Tax',
+    'Amount'
+  ];
 
   @override
   void didChangeDependencies() {
     order = ModalRoute.of(context)!.settings.arguments! as Order;
-    Provider.of<AuthProvider>(context, listen: false).getAddress();
+    Provider.of<AuthProvider>(context, listen: false).getUser();
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
-    address = Provider.of<AuthProvider>(context, listen: false).address;
+    user = Provider.of<AuthProvider>(context, listen: false).user;
     final itemTotal = order.amount! - (order.deliveryCharge! + order.tax!);
     return Scaffold(
       appBar: AppBar(
@@ -38,87 +46,118 @@ class _InvoiceState extends State<Invoice> {
       body: ListView(
         padding: const EdgeInsets.all(10),
         children: [
-          const Text(
-            'SHIP TO:',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            '${address?.area ?? ''},\n${address?.city ?? ''},\n${address?.state ?? ''}',
-            textAlign: TextAlign.center,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'SHIP TO:',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                '${user?.address?.area ?? ''},\n${user?.address?.city ?? ''}, ${user?.address?.state ?? ''}',
+              ),
+            ],
           ),
           const SizedBox(height: 20),
-          const Text(
-            'DATE:',
-            textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 17,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          Text(
-            DateFormat.yMMMMd('en_US').format(order.dateTime!),
-            textAlign: TextAlign.center,
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'ORDER ID: ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              Text(order.id ?? '')
+            ],
           ),
           const SizedBox(height: 20),
-          const Card(
-            child: ListTile(
-              leading: Text(
-                'Desc',
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: const [
+              Text(
+                'DELIVERD IN: ',
                 style: TextStyle(
-                  fontSize: 17,
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              title: Text(
-                'Unit Price',
-                textAlign: TextAlign.end,
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              trailing: Text(
-                'Amount',
-                style: TextStyle(
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-            ),
+              Text('3 to 5 working days')
+            ],
           ),
-          ListView.builder(
-            shrinkWrap: true,
-            itemCount: order.products!.length,
-            itemBuilder: (context, index) {
-              final item = order.products![index];
-              final amount = (item.price!) * (item.quantity!);
-              return ListTile(
-                leading: Text(
-                  item.title ?? '',
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
+          const SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'DATE: ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
                 ),
-                title: Text(
-                  '${item.price}  X${item.quantity}',
-                  textAlign: TextAlign.end,
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
+              ),
+              const SizedBox(width: 10),
+              Text(
+                DateFormat.yMMMMd('en_US').format(order.dateTime!),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text(
+                'NAME: ',
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
                 ),
-                trailing: Text(
-                  '$amount',
-                  textAlign: TextAlign.start,
-                  style: const TextStyle(
-                    fontSize: 15,
-                  ),
-                ),
-              );
-            },
+              ),
+              Text(user?.name ?? '')
+            ],
+          ),
+          const SizedBox(height: 20),
+          Card(
+            child: DataTable(
+              columnSpacing: 25,
+              columns: tableColumns
+                  .map((columnName) => DataColumn(label: Text(columnName)))
+                  .toList(),
+              rows: order.products!.map(
+                (item) {
+                  final itemTax =
+                      (((item.price ?? 0.0) * item.taxPercentage!) / 100) *
+                          item.quantity!;
+
+                  final total = itemTax + (item.price! * item.quantity!);
+                  return DataRow(
+                    cells: [
+                      DataCell(
+                        Flex(
+                          direction: Axis.vertical,
+                          children: [
+                            Expanded(
+                              child: ConstrainedBox(
+                                constraints: const BoxConstraints(maxWidth: 80),
+                                child: Text(
+                                  '${item.title}',
+                                  overflow: TextOverflow.ellipsis,
+                                  maxLines: 2,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      DataCell(Text('${item.quantity ?? 0.0}')),
+                      DataCell(Text('${item.price ?? ''}')),
+                      DataCell(Text(itemTax.toStringAsFixed(2))),
+                      DataCell(Text(total.toStringAsFixed(2))),
+                    ],
+                  );
+                },
+              ).toList(),
+            ),
           ),
           const SizedBox(height: 20),
           OrderPriceWidget(

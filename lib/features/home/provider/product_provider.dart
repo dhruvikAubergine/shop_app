@@ -75,6 +75,7 @@ class ProductProvider with ChangeNotifier {
             'imageUrl': newProduct.imageUrl,
             'isFavorite': newProduct.isFavorite,
             'description': newProduct.description,
+            'taxPercentage' :newProduct.taxPercentage,
           }),
         );
       } catch (error) {
@@ -180,6 +181,7 @@ class ProductProvider with ChangeNotifier {
           'imageUrl': product.imageUrl,
           'description': product.description,
           'userId': userId,
+          'taxPercentage': product.taxPercentage
         }),
       );
 
@@ -190,6 +192,7 @@ class ProductProvider with ChangeNotifier {
         price: product.price,
         imageUrl: product.imageUrl,
         description: product.description,
+        taxPercentage: product.taxPercentage,
       );
       _items.add(newProduct);
       notifyListeners();

@@ -1,24 +1,30 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/features/cart/provider/cart_provider.dart';
 import 'package:shop_app/features/cart/widgets/cart_item.dart';
+import 'package:shop_app/features/cart/widgets/order_price_widget.dart';
 import 'package:shop_app/features/order/provider/order_provider.dart';
 
-import 'package:shop_app/features/cart/widgets/order_price_widget.dart';
-
-class CartPage extends StatelessWidget {
+class CartPage extends StatefulWidget {
   const CartPage({super.key});
 
   static const routeName = '/cart';
 
+  @override
+  State<CartPage> createState() => _CartPageState();
+}
+
+class _CartPageState extends State<CartPage> {
   @override
   Widget build(BuildContext context) {
     final cart = Provider.of<CartProvider>(context);
     final itemValues = cart.items.values.toList();
     final itemKeys = cart.items.keys.toList();
     final deliveryCharge = cart.totalAmount * 0.05;
-    final tax = cart.totalAmount * 0.10;
-    final grandTotal = cart.totalAmount + deliveryCharge + tax;
+
+    final grandTotal = cart.totalAmount + deliveryCharge + cart.totalTax;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -28,44 +34,6 @@ class CartPage extends StatelessWidget {
         padding: const EdgeInsets.all(10),
         child: Column(
           children: [
-            // Card(
-            //   child: Padding(
-            //     padding: const EdgeInsets.all(10),
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            //       children: [
-            //         const Text('Total'),
-            //         const Spacer(),
-            //         Chip(
-            //           label: Text('\$ ${cart.totalAmount.toStringAsFixed(2)}'),
-            //           backgroundColor: Theme.of(context).primaryColor,
-            //         ),
-            //         TextButton(
-            //           onPressed: cart.totalAmount <= 0
-            //               ? null
-            //               : () async {
-            //                   await Provider.of<OrderProvider>(
-            //                     context,
-            //                     listen: false,
-            //                   ).addOrder(
-            //                     cart.items.values.toList(),
-            //                     cart.totalAmount,
-            //                   );
-            //                   cart.clear();
-            //                   ScaffoldMessenger.of(context).showSnackBar(
-            //                     const SnackBar(
-            //                       content: Text('order placed successfully.'),
-            //                       duration: Duration(seconds: 3),
-            //                     ),
-            //                   );
-            //                 },
-            //           child: const Text('Order now'),
-            //         )
-            //       ],
-            //     ),
-            //   ),
-            // ),
-            // const SizedBox(height: 10),
             Expanded(
               child: cart.items.isNotEmpty
                   ? ListView.builder(
@@ -78,6 +46,7 @@ class CartPage extends StatelessWidget {
                           image: itemValues[index].image ?? '',
                           quantity: itemValues[index].quantity ?? 0.0,
                           productId: itemKeys[index],
+                          taxPercentage: itemValues[index].taxPercentage ?? 0.0,
                         );
                       },
                     )
@@ -98,7 +67,7 @@ class CartPage extends StatelessWidget {
               OrderPriceWidget(
                 amount: cart.totalAmount,
                 deliveryCharge: deliveryCharge,
-                tax: tax,
+                tax: cart.totalTax,
                 grandTotal: grandTotal,
               )
           ],
@@ -115,12 +84,14 @@ class CartPage extends StatelessWidget {
                       context,
                       listen: false,
                     ).addOrder(
-                      cart.items.values.toList(),
+                      itemValues,
                       grandTotal,
                       deliveryCharge,
-                      tax,
+                      cart.totalTax,
                     );
+                    log('${cart.items}');
                     cart.clear();
+                    if (!mounted) return;
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
                         content: Text('order placed successfully.'),
@@ -143,4 +114,3 @@ class CartPage extends StatelessWidget {
     );
   }
 }
-

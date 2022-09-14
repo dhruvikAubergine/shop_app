@@ -12,6 +12,7 @@ class Product extends Equatable {
     this.duration,
     this.imageUrl,
     this.description,
+    this.taxPercentage,
     this.isFavorite = false,
     this.checkSalesAvailability = true,
   });
@@ -32,6 +33,7 @@ class Product extends Equatable {
   bool isFavorite;
   DateTime? duration;
   bool checkSalesAvailability;
+  double? taxPercentage;
 
   Map<String, dynamic> toJson() => _$ProductToJson(this);
 
@@ -44,12 +46,14 @@ class Product extends Equatable {
     bool? isFavorite,
     DateTime? duration,
     bool? checkSalesAvailability,
+    double? taxPercentage,
   }) {
     return Product(
       id: id ?? this.id,
       duration: duration ?? this.duration,
       title: title ?? this.title,
       price: price ?? this.price,
+      taxPercentage: taxPercentage ?? this.taxPercentage,
       imageUrl: imageUrl ?? this.imageUrl,
       description: description ?? this.description,
       isFavorite: isFavorite ?? this.isFavorite,
@@ -69,8 +73,9 @@ class Product extends Equatable {
       price,
       duration,
       imageUrl,
-      description,
       isFavorite,
+      description,
+      taxPercentage,
       checkSalesAvailability
     ];
   }

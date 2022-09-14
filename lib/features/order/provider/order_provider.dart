@@ -72,6 +72,7 @@ class OrderProvider with ChangeNotifier {
             as String,
       ),
     );
+    log(cartProduct.toString());
     notifyListeners();
   }
 }

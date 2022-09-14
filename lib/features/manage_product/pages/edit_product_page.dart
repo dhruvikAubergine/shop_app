@@ -18,6 +18,7 @@ class _EditProductPageState extends State<EditProductPage> {
 
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
+  final _taxPercentageController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _imageUrlController = TextEditingController();
   final _titleController = TextEditingController();
@@ -38,6 +39,7 @@ class _EditProductPageState extends State<EditProductPage> {
       description: _descriptionController.text,
       price: double.parse(_priceController.text),
       imageUrl: _isUrlValid ? _imageUrlController.text : '',
+      taxPercentage: double.parse(_taxPercentageController.text),
     );
     if (productId == '') {
       try {
@@ -83,14 +85,16 @@ class _EditProductPageState extends State<EditProductPage> {
       final editedProduct =
           Provider.of<ProductProvider>(context).findById(productArguments.id);
       _titleController.text = editedProduct.title ?? '';
+      _imageUrlController.text = editedProduct.imageUrl ?? '';
       _priceController.text = editedProduct.price.toString();
       _descriptionController.text = editedProduct.description ?? '';
-      _imageUrlController.text = editedProduct.imageUrl ?? '';
+      _taxPercentageController.text = editedProduct.taxPercentage.toString();
     } else {
       _titleController.text = '';
       _priceController.text = '';
       _descriptionController.text = '';
       _imageUrlController.text = '';
+      _taxPercentageController.text = '';
     }
 
     super.didChangeDependencies();
@@ -126,9 +130,7 @@ class _EditProductPageState extends State<EditProductPage> {
                 return null;
               },
             ),
-            const SizedBox(
-              height: 10,
-            ),
+            const SizedBox(height: 10),
             TextFormField(
               controller: _priceController,
               keyboardType: TextInputType.number,
@@ -145,6 +147,33 @@ class _EditProductPageState extends State<EditProductPage> {
                 final price = double.tryParse(value ?? '') ?? 0;
                 if (price.isNegative || price.isNaN || price == 0) {
                   return 'Please enter a valid price';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 10),
+            TextFormField(
+              keyboardType: TextInputType.number,
+              controller: _taxPercentageController,
+              textInputAction: TextInputAction.next,
+              autovalidateMode: AutovalidateMode.onUserInteraction,
+              decoration: InputDecoration(
+                labelText: 'Tax Percentage',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+              validator: (value) {
+                if (value?.isEmpty ?? true) {
+                  return 'Please enter a tac percentages';
+                }
+                final percentage = double.tryParse(value ?? '') ?? 0;
+                if (percentage.isNegative ||
+                    percentage.isNaN ||
+                    percentage == 0) {
+                  return 'Please enter a valid percentage';
+                } else if (percentage > 20) {
+                  return 'Tax Percentage should be 0 to 20.';
                 }
                 return null;
               },

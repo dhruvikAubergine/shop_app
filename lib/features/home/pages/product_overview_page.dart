@@ -56,6 +56,7 @@ class _ProductOverviewPageState extends State<ProductOverviewPage> {
             badgeContent: Text(cart.itemCount.toString()),
             child: IconButton(
               onPressed: () {
+                // cart.clear();
                 Navigator.pushNamed(context, CartPage.routeName);
               },
               icon: const Icon(Icons.shopping_cart),

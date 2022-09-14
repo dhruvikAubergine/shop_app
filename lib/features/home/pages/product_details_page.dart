@@ -62,6 +62,7 @@ class _ProductDetailsPageState extends State<ProductDetailsPage> {
                     widget.product.price ?? 0,
                     widget.product.title ?? '',
                     widget.product.imageUrl ?? '',
+                    widget.product.taxPercentage ?? 0.0,
                   );
                   ScaffoldMessenger.of(context).hideCurrentSnackBar();
                   ScaffoldMessenger.of(context).showSnackBar(

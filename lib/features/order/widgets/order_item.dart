@@ -70,14 +70,17 @@ class _OrderItemState extends State<OrderItem> {
               ),
             ),
             TextButton(
-              onPressed: () => Navigator.pushNamed(
-                context,
-                Invoice.routeName,
-                arguments: widget.order,
-              ),
+              onPressed: () {
+                Navigator.pushNamed(
+                  context,
+                  Invoice.routeName,
+                  arguments: widget.order,
+                );
+              },
               child: const Text('View Invoice'),
             )
-          ]
+          ],
+          // Text(widget.order.toString()),
         ],
       ),
     );

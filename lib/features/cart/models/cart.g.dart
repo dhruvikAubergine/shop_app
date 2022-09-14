@@ -23,13 +23,14 @@ class CartAdapter extends TypeAdapter<Cart> {
       price: fields[3] as double?,
       quantity: fields[4] as double?,
       productId: fields[5] as String?,
+      taxPercentage: fields[6] as double?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Cart obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -41,7 +42,9 @@ class CartAdapter extends TypeAdapter<Cart> {
       ..writeByte(4)
       ..write(obj.quantity)
       ..writeByte(5)
-      ..write(obj.productId);
+      ..write(obj.productId)
+      ..writeByte(6)
+      ..write(obj.taxPercentage);
   }
 
   @override
@@ -66,6 +69,7 @@ Cart _$CartFromJson(Map<String, dynamic> json) => Cart(
       price: (json['price'] as num?)?.toDouble(),
       quantity: (json['quantity'] as num?)?.toDouble(),
       productId: json['productId'] as String?,
+      taxPercentage: (json['taxPercentage'] as num?)?.toDouble(),
     );
 
 Map<String, dynamic> _$CartToJson(Cart instance) {
@@ -83,5 +87,6 @@ Map<String, dynamic> _$CartToJson(Cart instance) {
   writeNotNull('price', instance.price);
   writeNotNull('quantity', instance.quantity);
   writeNotNull('productId', instance.productId);
+  writeNotNull('taxPercentage', instance.taxPercentage);
   return val;
 }

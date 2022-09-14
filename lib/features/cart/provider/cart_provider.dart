@@ -31,6 +31,15 @@ class CartProvider with ChangeNotifier {
     return total;
   }
 
+  double get totalTax {
+    var tax = 0.0;
+    cartBox.toMap().forEach((key, value) {
+      tax += ((value.price * value.taxPercentage) / 100) * value.quantity
+          as double;
+    });
+    return tax;
+  }
+
   void removeItem(String productId) {
     cartBox.delete(productId);
     notifyListeners();
@@ -70,6 +79,7 @@ class CartProvider with ChangeNotifier {
     double price,
     String title,
     String image,
+    double taxPercentage,
   ) async {
     if (cartBox.containsKey(productId)) {
       final existingValue = cartBox.get(productId) as Cart;
@@ -86,6 +96,8 @@ class CartProvider with ChangeNotifier {
           title: title,
           image: image,
           quantity: 1,
+          taxPercentage: taxPercentage,
+          productId: productId,
         ),
       );
     }
@@ -93,8 +105,5 @@ class CartProvider with ChangeNotifier {
     notifyListeners();
     log(cartBox.keys.toString());
     log(cartBox.values.toString());
-
-    final keys = cartBox.keys.toList();
-    log(keys.toString());
   }
 }

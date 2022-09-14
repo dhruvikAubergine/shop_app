@@ -14,6 +14,7 @@ class Cart extends Equatable {
     this.price,
     this.quantity,
     this.productId,
+    this.taxPercentage,
   });
 
   factory Cart.fromJson(Map<String, dynamic> json) {
@@ -31,6 +32,8 @@ class Cart extends Equatable {
   final double? quantity;
   @HiveField(5)
   final String? productId;
+  @HiveField(6)
+  final double? taxPercentage;
 
   Map<String, dynamic> toJson() => _$CartToJson(this);
 
@@ -41,6 +44,7 @@ class Cart extends Equatable {
     double? price,
     double? quantity,
     String? productId,
+    double? taxPercentage,
   }) {
     return Cart(
       id: id ?? this.id,
@@ -49,6 +53,7 @@ class Cart extends Equatable {
       price: price ?? this.price,
       quantity: quantity ?? this.quantity,
       productId: productId ?? this.productId,
+      taxPercentage: taxPercentage ?? this.taxPercentage,
     );
   }
 
@@ -56,5 +61,6 @@ class Cart extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object?> get props => [id, title, image, price, quantity, productId];
+  List<Object?> get props =>
+      [id, title, image, price, quantity, productId, taxPercentage];
 }

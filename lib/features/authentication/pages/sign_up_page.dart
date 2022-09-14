@@ -34,7 +34,7 @@ class _SignUpPageState extends State<SignUpPage> {
     }
     _formKey.currentState?.save();
     final name = _nameController.text.trim();
-    final area = _areaController.text.trim(); 
+    final area = _areaController.text.trim();
     final city = _cityController.text.trim();
     final email = _emailController.text.trim();
     final phone = _phoneController.text.trim();

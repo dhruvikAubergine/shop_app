@@ -11,6 +11,7 @@ class CartItem extends StatelessWidget {
     required this.image,
     required this.quantity,
     required this.productId,
+    required this.taxPercentage,
   });
   final String id;
   final String productId;
@@ -18,10 +19,14 @@ class CartItem extends StatelessWidget {
   final String image;
   final double quantity;
   final double price;
+  final double taxPercentage;
 
   @override
   Widget build(BuildContext context) {
     final cardProvider = Provider.of<CartProvider>(context, listen: false);
+    final itemPrice = (price * quantity).toStringAsFixed(2);
+    final itemTax =
+        (((price * taxPercentage) / 100) * quantity).toStringAsFixed(2);
     return Dismissible(
       key: ValueKey(id),
       direction: DismissDirection.endToStart,
@@ -77,7 +82,7 @@ class CartItem extends StatelessWidget {
             backgroundImage: NetworkImage(image),
           ),
           title: Text(title),
-          subtitle: Text('\$$price'),
+          subtitle: Text('Price: \$$itemPrice \nProduct Tax: \$$itemTax'),
           trailing: FittedBox(
             fit: BoxFit.fill,
             child: Row(
